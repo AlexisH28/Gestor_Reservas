@@ -9,7 +9,6 @@ class Settings(BaseSettings):
     
     # Información de la aplicación
     APP_NAME: str = "Coworking Booking API"
-    VERSION: str = "1.0.0"
     DEBUG: bool = True
     
     # Base de datos MySQL
@@ -21,10 +20,9 @@ class Settings(BaseSettings):
     
     @property
     def DATABASE_URL(self) -> str:
-        """Construye la URL de la base de datos"""
         return f"mysql+pymysql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
     
-    # JWT Configuration
+    # Configuración JWT
     SECRET_KEY: str = "281209"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
@@ -34,7 +32,7 @@ class Settings(BaseSettings):
     MAX_RESERVATION_DAYS_ADVANCE: int = 30  # Máximo 30 días de anticipación
     MAX_DAILY_RESERVATIONS_PER_USER: int = 3  # Máximo 3 reservas por día por usuario
     
-    # Sistema de penalizaciones
+    # Sistema de penalizaciones --> Adicional
     MAX_CANCELLATIONS_PER_MONTH: int = 3  # Máximo 3 cancelaciones por mes
     PENALTY_DAYS: int = 7  # Días de penalización por exceso de cancelaciones
     
