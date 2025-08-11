@@ -1,7 +1,4 @@
-"""
-UsersController - Endpoints específicos de gestión de usuarios
-Separado del auth para organizar mejor las rutas
-"""
+# Endpoints Gestión de Usuarios
 
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
@@ -13,16 +10,11 @@ from app.auth.service import UserService
 from app.auth.model import UserRole
 from app.auth.schemas import UserResponse, UserSummary, UserList
 
-# ============================================
-# CONFIGURACIÓN DEL ROUTER
-# ============================================
+# Configuración del Router
 
 router = APIRouter()
 
-
-# ============================================
-# ENDPOINTS PÚBLICOS DE USUARIOS
-# ============================================
+# Endpoints Públicos de Usuario
 
 @router.get(
     "/me",
@@ -33,18 +25,9 @@ router = APIRouter()
 async def get_my_profile(
     current_user = Depends(get_current_user)
 ):
-    """
-    Obtener perfil del usuario logueado
-    
-    Este endpoint está duplicado aquí y en /auth/me
-    para dar flexibilidad en las rutas
-    """
     return current_user
 
-
-# ============================================
-# ENDPOINTS DE ADMINISTRACIÓN
-# ============================================
+# Endpoints de Administración
 
 @router.get(
     "/",
@@ -61,14 +44,6 @@ async def list_users(
     active: Optional[bool] = Query(None, description="Filtrar por estado activo"),
     db: Session = Depends(get_db)
 ):
-    """
-    Listar usuarios con filtros y paginación
-    
-    Filtros disponibles:
-    - **search**: Busca en nombre y email
-    - **role**: Filtra por rol (user/admin)
-    - **active**: Filtra por estado activo
-    """
     user_service = UserService(db)
     
     # TODO: Implementar filtros de búsqueda en el service
@@ -90,7 +65,6 @@ async def list_users(
         pages=pages
     )
 
-
 @router.get(
     "/{user_id}",
     response_model=UserResponse,
@@ -102,13 +76,7 @@ async def get_user(
     current_user = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """
-    Obtener información de un usuario
     
-    Reglas:
-    - Los usuarios pueden ver su propia información
-    - Solo admin puede ver información de otros usuarios
-    """
     # Si no es admin y no es su propio perfil, denegar acceso
     if current_user.rol != UserRole.ADMIN and current_user.id != user_id:
         raise HTTPException(
@@ -127,7 +95,6 @@ async def get_user(
     
     return user
 
-
 @router.delete(
     "/{user_id}",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -140,14 +107,7 @@ async def delete_user(
     current_user = Depends(require_admin),
     db: Session = Depends(get_db)
 ):
-    """
-    Eliminar usuario permanentemente
     
-    Validaciones:
-    - Solo admin puede eliminar usuarios
-    - Admin no puede eliminarse a sí mismo
-    - Se eliminan también las reservas del usuario
-    """
     # Validar que admin no se elimine a sí mismo
     if current_user.id == user_id:
         raise HTTPException(
@@ -158,4 +118,4 @@ async def delete_user(
     user_service = UserService(db)
     await user_service.delete_user(user_id)
     
-    return None  # 204 No Content
+    return None  # 204 --> No Content
