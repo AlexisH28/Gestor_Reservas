@@ -8,19 +8,19 @@ import logging
 
 from app.config.settings import settings
 
-# Configuración de logging
+# Configuración del logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Crear engine de SQLAlchemy
+# Creación engine de SQLAlchemy
 try:
     engine = create_engine(
         settings.DATABASE_URL,
-        echo=settings.DEBUG,  # Mostrar queries SQL en debug
-        pool_pre_ping=True,   # Verificar conexión antes de usar
-        pool_recycle=300,     # Reciclar conexiones cada 5 minutos
-        pool_size=10,         # Tamaño del pool de conexiones
-        max_overflow=20       # Conexiones adicionales permitidas
+        echo=settings.DEBUG,  
+        pool_pre_ping=True,   
+        pool_recycle=300,     
+        pool_size=10,         
+        max_overflow=20       
     )
     logger.info("✅ Engine de base de datos creado exitosamente")
 except SQLAlchemyError as e:
@@ -30,15 +30,15 @@ except SQLAlchemyError as e:
 # Crear sessionmaker
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Base para modelos
+# Base para los modelos
 Base = declarative_base()
 metadata = MetaData()
 
 
 async def get_db():
-    """
-    Dependencia para obtener sesión de base de datos
-    """
+    
+    # Dependencia para obtener sesión de base de datos
+
     db = SessionLocal()
     try:
         yield db
@@ -51,9 +51,6 @@ async def get_db():
 
 
 async def create_tables():
-    """
-    Crear todas las tablas definidas en los modelos
-    """
     try:
         # Importar todos los modelos para que sean registrados
         from app.auth.model import User
@@ -73,10 +70,9 @@ async def create_tables():
 
 
 async def drop_tables():
-    """
-    Eliminar todas las tablas (útil para testing)
-    ⚠️ USAR CON CUIDADO - Elimina todos los datos
-    """
+    
+    # Eliminar todas las tablas ⚠️
+    
     if not settings.DEBUG:
         raise Exception("❌ No se puede eliminar tablas en producción")
     
@@ -91,8 +87,8 @@ async def drop_tables():
 
 def test_connection():
     """
-    Probar la conexión a la base de datos
-    Retorna True si la conexión es exitosa
+    - Probar la conexión a la base de datos
+    - Retorna True si la conexión es exitosa
     """
     try:
         connection = engine.connect()
