@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     # Información de la aplicación
     APP_NAME: str = "Coworking Booking API"
     DEBUG: bool = True
+    VERSION: str = "1.0.0"
     
     # Base de datos MySQL
     DB_HOST: str = "localhost"
